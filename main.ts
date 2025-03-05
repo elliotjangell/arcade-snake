@@ -84,6 +84,9 @@ let score = 0
 let dir = ""
 game.setGameOverEffect(false, effects.none)
 game.setGameOverPlayable(false, music.melodyPlayable(music.powerDown), false)
+if (!(blockSettings.exists("high"))) {
+    blockSettings.writeNumber("high", 0)
+}
 let tileSprite = sprites.create(img`
     bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
     bccccccccbbccccccccbbccccccccbbccccccccbbccccccccbbccccccccbbccccccccbbccccccccbbccccccccbbccccccccb
