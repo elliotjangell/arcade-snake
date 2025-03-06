@@ -15,6 +15,51 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
         dir = "l"
     }
 })
+controller.menu.onEvent(ControllerButtonEvent.Released, function () {
+    music.stopAllSounds()
+    if (!(blockSettings.readNumber("high") == 0)) {
+        if (game.ask("Add To Leaderboard?", "A: Spacebar, B: Enter")) {
+            addScore = blockSettings.readNumber("high")
+            addName = game.askForString("Enter your initials!", 3)
+            alphabetUppercaseList = [
+            "A",
+            "B",
+            "C",
+            "D",
+            "E",
+            "F",
+            "G",
+            "H",
+            "I",
+            "J",
+            "K",
+            "L",
+            "M",
+            "N",
+            "O",
+            "P",
+            "Q",
+            "R",
+            "S",
+            "T",
+            "U",
+            "V",
+            "W",
+            "X",
+            "Y",
+            "Z"
+            ]
+            newCode = ""
+            if (addName.length == 3) {
+                for (let index = 0; index < 20; index++) {
+                    newCode = "" + newCode + convertToText(Math.round(Math.constrain(rng.randomRange(0, Math.map((addScore - (alphabetUppercaseList.indexOf(addName.charAt(0)) + 1)) / (alphabetUppercaseList.indexOf(addName.charAt(1)) + 1) + (alphabetUppercaseList.indexOf(addName.charAt(2)) + 1), 0, addScore, 0, 9)), 0, 9)))
+                }
+                game.splash(newCode)
+                rng.resetRNG()
+            }
+        }
+    }
+})
 function newApple () {
     apple = sprites.create(img`
         4 4 4 4 4 4 4 4 4 4 
@@ -41,6 +86,9 @@ controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
         dir = "r"
     }
 })
+controller.menu.onEvent(ControllerButtonEvent.Repeated, function () {
+    blockSettings.writeNumber("high", 0)
+})
 function firstSpriteInArray (sprite: Sprite, list: Sprite[]) {
     return list.indexOf(sprite) == 0
 }
@@ -48,6 +96,9 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     if (!(dir == "u") && !(lastDir == "u")) {
         dir = "d"
     }
+})
+controller.menu.onEvent(ControllerButtonEvent.Pressed, function () {
+	
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (sprite, otherSprite) {
     music.play(music.createSoundEffect(
@@ -79,9 +130,16 @@ function gameover () {
 }
 let snake: Sprite = null
 let apple: Sprite = null
+let newCode = ""
+let alphabetUppercaseList: string[] = []
+let addName = ""
+let addScore = 0
 let lastDir = ""
 let score = 0
 let dir = ""
+let rng: FastRandomBlocks = null
+rng = Random.createRNG(75364)
+controller.configureRepeatEventDefaults(2000, 1000)
 game.setGameOverEffect(false, effects.none)
 game.setGameOverPlayable(false, music.melodyPlayable(music.powerDown), false)
 if (!(blockSettings.exists("high"))) {
